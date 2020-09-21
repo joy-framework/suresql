@@ -55,7 +55,7 @@ createdb todos_dev
 
 Suresql doesn't abstract sql away from you, it gives you an easy [yesql](https://github.com/krisajenkins/yesql) inspired way of working *with* sql! Even migrations happen in plain sql:
 
-### Step 1. Create a sql file wherever you want
+Step 1. Create a sql file wherever you want
 
 ```sql
 -- sql/users.sql
@@ -68,7 +68,7 @@ create table if not exists users (
 )
 ```
 
-### Step 2. Reference that sql file in a `.janet` file with `defqueries` (named whatever you want)
+Step 2. Reference that sql file in a `.janet` file with `defqueries` (named whatever you want)
 
 ```clojure
 ; # users.janet
@@ -81,7 +81,7 @@ create table if not exists users (
             {:connection (sqlite3/open "db.sqlite3")})
 ```
 
-### Step 3. Reference that janet file and start calling functions from your sql file:
+Step 3. Reference that janet file and start calling functions from your sql file:
 
 ```clojure
 (import ./users)
@@ -146,7 +146,7 @@ And now `defqueries` inserts all of those named queries as functions into the `u
 (users/delete 1) ; # => @[]
 ```
 
-For the eagle-eyed, you probably noticed that you can not only name sql queries, you can also pass janet functions to them with `-- fn: `
+You may have noticed that you can not only name sql queries, you can also pass janet functions to them with `-- fn: `
 
 ```sql
 -- name: find
