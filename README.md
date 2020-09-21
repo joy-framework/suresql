@@ -99,7 +99,7 @@ This works for any query:
 -- name: where
 select *
 from users
-where email = :email
+where name = :name
 
 -- name: find
 -- fn: first
