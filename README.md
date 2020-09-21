@@ -51,7 +51,7 @@ Run this command to create a postgres database, assuming a running postgres serv
 createdb todos_dev
 ```
 
-## Migrations
+## Queries
 
 Suresql doesn't abstract sql away from you, it gives you an easy [yesql](https://github.com/krisajenkins/yesql) inspired way of working *with* sql! Even migrations happen in plain sql:
 
