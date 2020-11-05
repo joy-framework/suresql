@@ -1,32 +1,38 @@
 (import tester :prefix "" :exit true)
-(import pq)
 (import ./pq-users :as users)
 
-(users/drop-table)
-(users/create-table)
+(var pq-installed? false)
+(try
+  (do
+    (import pq)
+    (set pq-installed? true))
+  ([_]))
 
-(deftest
-  (test "insert"
-    (is (deep= @{:id 1 :name "sean" :active 1}
-               (users/insert "sean" 1))))
+(when pq-installed?
+  (users/drop-table)
+  (users/create-table)
 
-
-  (test "select"
-    (is (deep= @{:id 1 :name "sean" :active 1}
-               (users/find 1))))
-
-
-  (test "where"
-    (is (deep= @[@{:id 1 :name "sean" :active 1}]
-               (users/active?))))
+  (defsuite "postgres"
+    (test "insert"
+      (is (deep= @{:id 1 :name "sean" :active 1}
+                 (users/insert "sean" 1))))
 
 
-  (test "update"
-    (is (deep= @{:id 1 :name "sean" :active 0}
-               (users/update 0 "sean" 1))))
+    (test "select"
+      (is (deep= @{:id 1 :name "sean" :active 1}
+                 (users/find 1))))
 
 
-  (test "delete"
-    (is (deep= @{:id 1 :name "sean" :active 0}
-               (users/delete 1)))))
+    (test "where"
+      (is (deep= @[@{:id 1 :name "sean" :active 1}]
+                 (users/active?))))
 
+
+    (test "update"
+      (is (deep= @{:id 1 :name "sean" :active 0}
+                 (users/update 0 "sean" 1))))
+
+
+    (test "delete"
+      (is (deep= @{:id 1 :name "sean" :active 0}
+                 (users/delete 1))))))
