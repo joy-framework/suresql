@@ -10,9 +10,9 @@ jpm install https://github.com/joy-framework/suresql
 You will also need one of the following libraries:
 
 ```sh
-jpm install http://github.com/janet-lang/sqlite3
+jpm install sqlite3
 # or
-jpm install http://github.com/andrewchambers/janet-pq
+jpm install pq
 ```
 
 ## Create a database
