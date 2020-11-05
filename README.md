@@ -7,28 +7,17 @@ __A sql library for janet__
 jpm install https://github.com/joy-framework/suresql
 ```
 
-This should also download the following libs:
-
-- http://github.com/andrewchambers/janet-pq
-- http://github.com/janet-lang/sqlite3
-
-## Usage
-
-suresql reads your current os environment for the connection string in the variable `DATABASE_URL`, which can either start with `postgres` or if it doesn't, it defaults to using sqlite3.
+You will also need one of the following libraries:
 
 ```sh
-# your environment variables
-
-# for postgres
-DATABASE_URL=postgres://user3123:passkja83kd8@ec2-117-21-174-214.compute-1.amazonaws.com:6212/db982398
-
-# for sqlite
-DATABASE_URL=db982398.sqlite3
+jpm install http://github.com/janet-lang/sqlite3
+# or
+jpm install http://github.com/andrewchambers/janet-pq
 ```
 
 ## Create a database
 
-suresql supports two databases
+suresql currently supports two databases
 
 1. sqlite3
 2. postgres
@@ -53,7 +42,7 @@ createdb todos_dev
 
 ## Migrations
 
-Suresql doesn't abstract sql away from you, it gives you an easy [yesql](https://github.com/krisajenkins/yesql) inspired way of working *with* sql! Even migrations happen in plain sql:
+Suresql doesn't abstract sql away from you, it gives you an easy [yesql](https://github.com/krisajenkins/yesql) inspired way of working *with* sql! Even migrations can happen in plain sql:
 
 ### Step 1. Create a sql file wherever you want
 
@@ -72,8 +61,6 @@ create table if not exists users (
 
 ```clojure
 ; # users.janet
-(os/setenv "DATABASE_URL" "db.sqlite3")
-
 (import sqlite3)
 (import suresql :prefix "")
 
@@ -146,7 +133,7 @@ And now `defqueries` inserts all of those named queries as functions into the `u
 (users/delete 1) ; # => @[]
 ```
 
-For the eagle-eyed, you probably noticed that you can not only name sql queries, you can also pass janet functions to them with `-- fn: `
+You may have noticed that you can not only name sql queries, you can also pass janet functions to them with `-- fn: `
 
 ```sql
 -- name: find
