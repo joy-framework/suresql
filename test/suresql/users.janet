@@ -1,8 +1,10 @@
-(import sqlite3)
+(import "src/suresql/init" :prefix "")
 
-(os/setenv "DATABASE_URL" "test.sqlite3")
+(var sqlite3/open identity)
+(def database-url "test.sqlite3")
 
-(import "src/suresql/suresql" :prefix "")
+(try!
+  (import sqlite3))
 
 (defqueries "sql/users.sql"
             {:connection (sqlite3/open "test.sqlite3")})
