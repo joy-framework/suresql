@@ -18,18 +18,21 @@ where id = :id
 select *
 from users
 where id = ?
+limit 1
 
 -- name: find-by-rowid
 -- fn: first
 select *
 from users
 where rowid = ?
+limit 1
 
 -- name: last-inserted
 -- fn: |(-> $ first (get :id) (users/find-by-rowid))
 select last_insert_rowid() as id
 
 -- name: insert
+-- fn: (fn [_] (users/last-inserted))
 insert into users (
   name,
   active
@@ -45,4 +48,6 @@ set active = :active,
 where id = :id
 
 -- name: delete
-delete from users where id = ?
+delete
+from users
+where id = ?
