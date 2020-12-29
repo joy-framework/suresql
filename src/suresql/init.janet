@@ -10,8 +10,13 @@
 (try! (import sqlite3))
 (try! (import pq))
 
+
 (defn- sqlite? [conn]
   (= :sqlite3.connection (type conn)))
+
+
+(defn- pq? [conn]
+  (= :pq/context (type conn)))
 
 
 (defn- sql-params [args]
@@ -32,20 +37,37 @@
     (peg/match queries-peg str)))
 
 
-(defn- query-fn [conn {"sql" sql "fn" f "name" name}]
+(defn- query [conn sql f args]
+  (let [func (when f (eval-string f))
+        rows (cond
+               (sqlite? conn)
+               (map |(table ;(kvs $)) (sqlite3/eval conn sql (sql-params args)))
+
+               (pq? conn)
+               (pq/all conn sql ;args)
+
+               :else
+               (error (string/format "Unsupported connection type %q" conn)))]
+    (if (function? func)
+      (func rows)
+      rows)))
+
+
+(defn- query-fn [connection {"sql" sql "fn" f}]
   (fn [& args]
-    (let [func (when f (eval-string f))
-          rows (if (sqlite? conn)
-                 (map |(table ;(kvs $)) (sqlite3/eval conn sql (sql-params args)))
-                 (pq/all conn sql ;args))]
-      (if (function? func)
-        (func rows)
-        rows))))
+    (cond
+      (nil? connection)
+      (let [[conn] args]
+        (query conn sql f (drop 1 args)))
+
+      :else
+      (query connection sql f args))))
 
 
-(defn defqueries [sql-file {:connection connection}]
+(defn defqueries [sql-file &opt options]
   (let [queries (->> (slurp sql-file)
-                     (parse-queries))]
+                     (parse-queries))
+        connection (get options :connection)]
 
     (loop [q :in queries]
       (let [{"name" name} q]
