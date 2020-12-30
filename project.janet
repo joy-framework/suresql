@@ -7,7 +7,7 @@
   :repo "git+https://github.com/joy-framework/suresql")
 
 (declare-source
-  :source @["src"])
+  :source @["src/suresql"])
 
 (phony "tests" []
   (os/shell "find . -name '*.janet' | entr -c jpm test"))
