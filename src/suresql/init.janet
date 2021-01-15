@@ -19,10 +19,26 @@
   (= :pq/context (type conn)))
 
 
-(defn- sql-params [args]
+(defn- table/slice [dict ks]
+  (var output @{})
+
+  (each k ks
+    (put output k (get dict k)))
+
+  output)
+
+
+(defn- columns [sql]
+  (let [cols (peg/match ~{:main (some (choice :col 1))
+                          :col (sequence ":" (capture (some (if (choice :w "_") 1))))}
+                        sql)]
+    (map keyword (or cols []))))
+
+
+(defn- sql-params [args columns]
   (let [[arg] args]
     (if (dictionary? arg)
-      arg
+      (if columns (table/slice arg columns) arg)
       args)))
 
 
@@ -37,11 +53,11 @@
     (peg/match queries-peg str)))
 
 
-(defn- query [conn sql f args]
+(defn- query [conn sql f args columns]
   (let [func (when f (eval-string f))
         rows (cond
                (sqlite? conn)
-               (map |(table ;(kvs $)) (sqlite3/eval conn sql (sql-params args)))
+               (map |(table ;(kvs $)) (sqlite3/eval conn sql (sql-params args columns)))
 
                (pq? conn)
                (pq/all conn sql ;args)
@@ -54,14 +70,15 @@
 
 
 (defn- query-fn [connection {"sql" sql "fn" f}]
-  (fn [& args]
-    (cond
-      (nil? connection)
-      (let [[conn] args]
-        (query conn sql f (drop 1 args)))
+  (let [columns (columns sql)]
+    (fn [& args]
+      (cond
+        (nil? connection)
+        (let [[conn] args]
+          (query conn sql f (drop 1 args) columns))
 
-      :else
-      (query connection sql f args))))
+        :else
+        (query connection sql f args columns)))))
 
 
 (defn defqueries [sql-file &opt options]

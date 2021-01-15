@@ -33,6 +33,13 @@
                  (users/update {:name "sean" :active 0 :id 1}))))
 
 
+    (test "update with more columns than in update statement"
+      (is (deep= @{:id 1 :name "sean1" :active 0}
+                 (do
+                   (users/update {:name "sean1" :active 0 :id 1 :a 1 :b 2})
+                   (users/find 1)))))
+
+
     (test "delete"
       (is (deep= @[]
                  (users/delete 1))))))
