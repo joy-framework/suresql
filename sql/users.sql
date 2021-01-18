@@ -31,6 +31,19 @@ limit 1
 -- fn: |(-> $ first (get :id) (users/find-by-rowid))
 select last_insert_rowid() as id
 
+-- name: row-id
+-- fn: |(-> $ first (get :rowid))
+select last_insert_rowid() as rowid
+
+-- name: create
+insert into users (
+  name,
+  active
+) values (
+  :name,
+  :active
+)
+
 -- name: insert
 -- fn: (fn [_] (users/last-inserted))
 insert into users (

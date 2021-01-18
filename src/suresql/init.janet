@@ -19,6 +19,11 @@
   (= :pq/context (type conn)))
 
 
+(defn- connection? [conn]
+  (or (sqlite? conn)
+      (pq? conn)))
+
+
 (defn- table/slice [dict ks]
   (var output @{})
 
@@ -78,7 +83,10 @@
           (query conn sql f (drop 1 args) columns))
 
         :else
-        (query connection sql f args columns)))))
+        (if (connection? (last args))
+            (query (last args) sql f (filter |(not (connection? $)) args)
+                                     columns)
+            (query connection sql f args columns))))))
 
 
 (defn defqueries [sql-file &opt options]

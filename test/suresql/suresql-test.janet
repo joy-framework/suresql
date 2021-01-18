@@ -42,4 +42,12 @@
 
     (test "delete"
       (is (deep= @[]
-                 (users/delete 1))))))
+                 (users/delete 1))))
+
+
+    (test "with transaction"
+      (is (deep= @{:id 1 :name "test" :active 1}
+                 (with [db (sqlite3/open users/database-url)]
+                   (users/create {:name "test" :active 1} db)
+                   (-> (users/row-id db)
+                       (users/find-by-rowid db))))))))
