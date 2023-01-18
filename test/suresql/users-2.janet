@@ -1,4 +1,4 @@
-(import "src/suresql/init" :prefix "")
+(import ../../src/suresql :prefix "")
 
 (def database-url "users-2.sqlite3")
 

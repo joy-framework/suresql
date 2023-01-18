@@ -1,4 +1,4 @@
-(import "src/suresql/init" :prefix "")
+(import ../../src/suresql :prefix "")
 
 (var pq/connect identity)
 (def database-url "postgres://localhost:5432/suresql_test_db")

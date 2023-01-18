@@ -92,8 +92,14 @@
 (defn defqueries [sql-file &opt options]
   (let [queries (->> (slurp sql-file)
                      (parse-queries))
-        connection (get options :connection)]
+        connection (get options :connection)
+        connected-queries @{}]
 
     (loop [q :in queries]
-      (let [{"name" name} q]
-        (defglobal (symbol name) (query-fn connection q))))))
+      (let [{"name" name} q
+            q-fn (query-fn connection q)]
+        (defglobal (symbol name) q-fn)
+        (put connected-queries
+             (keyword name)
+             q-fn)))
+    connected-queries))
