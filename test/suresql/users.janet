@@ -1,4 +1,4 @@
-(import "src/suresql/init" :prefix "")
+(import ../../src/suresql :prefix "")
 
 (var sqlite3/open identity)
 (def database-url "test.sqlite3")
