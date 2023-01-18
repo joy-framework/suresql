@@ -97,9 +97,8 @@
 
     (loop [q :in queries]
       (let [{"name" name} q
-            name (symbol name)
             q-fn (query-fn connection q)]
-        (defglobal name q-fn)
+        (defglobal (symbol name) q-fn)
         (put connected-queries
              (keyword name)
              q-fn)))
